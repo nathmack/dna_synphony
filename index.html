@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webcam</title>
+  <style type="text/css">
+    #body {
+      background: #34495e;
+    }
+
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    canvas {
+      border: solid #f1c40f;
+      transform: scaleX(-1);
+    }
+
+    video {
+      position: absolute;
+      transform: scaleX(-1);
+    }
+
+    #clear {
+      position: absolute;
+      margin-top: 400px;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 20px;
+      padding: 20px 30px;
+      border-radius: 3px;
+      background: #2980b9;
+      text-transform: uppercase;
+      color: white;
+      cursor: pointer;
+    }
+
+    #timer {
+      position: absolute;
+      margin-top: -400px;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 40px;
+      padding: 20px 30px;
+      text-transform: uppercase;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body id="body">
+  <div class="content">
+    <video id="video" width="800" height="600" autoplay></video>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div id="timer"></div>
+    <div id="clear">Clear</div>
+  </div>
+  <script type="text/javascript">
+
+    // set up all of our references
+    var video = document.getElementById("video");
+    var canvas = document.getElementById("canvas");
+    var body = document.getElementById("body");
+    var clear = document.getElementById("clear");
+    var timer = document.getElementById("timer");
+
+    // create a canvas context
+    var context = canvas.getContext("2d");
+
+    // in this function, we draw two circles, and one half circle
+    function setUp() {
+      context.beginPath();
+      context.arc(300,200,50,0,2*Math.PI);
+      context.lineWidth = 4
+      context.strokeStyle = "#2ecc71"
+      context.stroke();
+
+      context.beginPath();
+      context.arc(500,200,50,0,2*Math.PI);
+      context.lineWidth = 4
+      context.strokeStyle = "#2ecc71"
+      context.stroke();
+
+      context.beginPath();
+      context.arc(400,350,50,0,Math.PI);
+      context.lineWidth = 4
+      context.strokeStyle = "#2ecc71"
+      context.stroke();
+    }
+
+    // this is the video streaming part, you can just copy this code to your project
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+        video.src = window.URL.createObjectURL(stream);
+        video.play();
+      });
+    }
+
+    // this is the event listener, waiting for the space key
+    window.addEventListener("keypress", function(event) {
+      var key = event.keyCode ? event.keyCode : event.which;
+
+      // here is where we check if the key is space
+      if (key == 32) {
+        // stop the screen from scrolling
+        event.preventDefault()
+
+        // set up our count down variable
+        let count = 3
+        // make the background white
+        body.style.backgroundColor = "#fff"
+
+        // start a loop (that will run forever until we tell it to stop)
+        var intKey = window.setInterval(function() {
+          // set the content of the "timer" div to the number assigned to "count"
+          timer.innerHTML = count
+
+          // make "count" 1 less than it currently is
+          count = count - 1;
+
+          // if the counter is less that 0, we want to do all this stuff
+          if (count < 0) {
+            // first, tell the loop to stop running
+            clearInterval(intKey)
+
+
+            // take a picture a log out the pixel value
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            console.log(context.getImageData(300, 200, 1, 1).data)
+
+            // reset the color and the timer div
+            timer.innerHTML = ''
+            body.style.backgroundColor = "#34495e"
+          }
+        }, 500)
+
+      }
+    })
+
+    // this event lister is waiting for us to click the "Clear" button
+    clear.addEventListener("click", function(){
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      setUp();
+    })
+
+    setUp();
+  </script>
+</body>
+</html>
