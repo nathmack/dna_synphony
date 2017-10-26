@@ -7,6 +7,7 @@ This is only required to access the video stream, so does not need to be done ri
 3. open iterm and download nodemon by typing `npm install nodemon -g` in the command line
 4. Within the terminal, navigate to the file path with the project in it - https://computers.tutsplus.com/tutorials/navigating-the-terminal-a-gentle-introduction--mac-3855
 5. within that path, run `nodemon index.js` - note you will need the same file structure as the other project, eg. an `index.js` file (you should just cope the other one) and a `index.html` file
+6. Once you have run that, open `http://localhost:8000/` in chrome
 
 ## Main tasks
 
